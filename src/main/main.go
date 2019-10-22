@@ -7,7 +7,7 @@ import (
 
 func hello(w http.ResponseWriter, _ *http.Request) {
 
-	var _, err = io.WriteString(w, "Hello, world!")
+	var _, err = io.WriteString(w, "Hello, heroku visitors!")
 
 	if err != nil {
 		print(err)
