@@ -32,7 +32,7 @@ func getPort() string {
 
 	print("(heroku:" + port + ")")
 
-	if len(port) != 4 {
+	if port == "" {
 		port = "8000"
 	}
 
