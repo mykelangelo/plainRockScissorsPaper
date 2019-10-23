@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
@@ -9,11 +10,30 @@ import (
 
 const Hello = "Hello, YOLO!"
 
-func hello(w http.ResponseWriter, _ *http.Request) {
+type Chat struct {
+	ID string `json:"id"`
+}
+type MessagePtr struct {
+	Chat Chat `json:"chat"`
+}
+type Body struct {
+	Message MessagePtr `json:"body"`
+}
+
+func hello(w http.ResponseWriter, r *http.Request) {
+
+	var val Body
+
+	if err := json.NewDecoder(r.Body).Decode(&val); err != nil {
+
+		log.Printf("main.go:hello.writeHello(): %+v", err)
+	}
+
+	log.Printf("%s\n", val.Message.Chat.ID)
 
 	if _, err := io.WriteString(w, Hello); err != nil {
 
-		log.Printf("main.go:hello(): %+v", err)
+		log.Printf("main.go:hello.writeHello(): %+v", err)
 	}
 }
 

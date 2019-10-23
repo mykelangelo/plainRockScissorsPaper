@@ -14,4 +14,8 @@
 
 Good old rock-scissors-paper game inline chat bot for Telegram (with "plain" preface due to its simple yet ungeneralized implementation form)
 
+Telegram bot: https://t.me/plainRockScissorsPaperBot
+
+Online API: https://plain-rock-scissors-paper-game.herokuapp.com
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmykelangelo%2FplainRockScissorsPaper.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmykelangelo%2FplainRockScissorsPaper?ref=badge_large)
