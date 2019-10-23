@@ -1,1 +1,1 @@
-web: bin/plainRockScissorsPaper
+web: plainRockScissorsPaper
