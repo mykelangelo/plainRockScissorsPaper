@@ -10,7 +10,7 @@ func hello(w http.ResponseWriter, _ *http.Request) {
 	var _, err = io.WriteString(w, "Yello, YOLO!")
 
 	if err != nil {
-		print("hello", err)
+		print("hello", err.Error())
 	}
 }
 
