@@ -21,6 +21,6 @@ func main() {
 	var err = http.ListenAndServe(":71", nil)
 
 	if err != nil {
-		print("main", err)
+		print("main", err.Error())
 	}
 }
