@@ -11,7 +11,7 @@ import (
 const Hello = "Hello, YOLO!"
 
 type Chat struct {
-	ID string `json:"id"`
+	ID int `json:"id"`
 }
 type MessagePtr struct {
 	Chat Chat `json:"chat"`
@@ -29,7 +29,7 @@ func hello(w http.ResponseWriter, r *http.Request) {
 		log.Printf("main.go:hello.writeHello(): %+v", err)
 	}
 
-	log.Printf("%s", val.Message.Chat.ID)
+	log.Printf("%d", val.Message.Chat.ID)
 
 	if _, err := io.WriteString(w, Hello); err != nil {
 
