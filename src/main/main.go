@@ -30,6 +30,8 @@ func getPort() string {
 
 	var port = os.Getenv("PORT")
 
+	print("(heroku:" + port + ")")
+
 	if len(port) != 4 {
 		port = "8000"
 	}
