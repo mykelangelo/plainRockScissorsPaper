@@ -46,7 +46,7 @@ func POST(id int) {
 	newRequest, err := http.NewRequest("POST", PostUrl, strings.NewReader(data.Encode()))
 	fatality(err, "POST().newReq")
 
-	_, err = http.DefaultClient.Do(newRequest)
+	_, err = http.Client{}.Do(newRequest)
 	fatality(err, "POST().doReq")
 }
 
