@@ -36,12 +36,10 @@ func (b *ResponseBody) Read(p []byte) (int, error) {
 
 const UserGreeting = "Good day to you, kind sir! How may I be of service today?"
 
-var PostUrl = "https://api.telegram.org/bot" + os.Getenv("bot_token") + "/sendMessage"
-
 func hello(w http.ResponseWriter, r *http.Request) {
 	var requestBody RequestBody
 
-	fatality(json.NewDecoder(r.Body).Decode(&requestBody), "hello.writeHello()")
+	fatality(json.NewDecoder(r.Body).Decode(&requestBody), "hello().decode")
 
 	log.Printf("user wrote: `%s`", requestBody.Message.Text)
 
@@ -61,6 +59,12 @@ func POST(id int) {
 		ChatId: id,
 		Text:   UserGreeting,
 	}
+
+	botToken := os.Getenv("bot_token")
+
+	log.Printf("%s", botToken)
+
+	PostUrl := "https://api.telegram.org/bot" + botToken + "/sendMessage"
 
 	newRequest, err := http.NewRequest("POST", PostUrl, &responseBody)
 	fatality(err, "POST().newReq")
