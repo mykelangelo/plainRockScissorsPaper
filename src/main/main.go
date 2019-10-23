@@ -2,16 +2,18 @@ package main
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"os"
 )
 
+const Hello = "Hello, YOLO!"
+
 func hello(w http.ResponseWriter, _ *http.Request) {
 
-	var _, err = io.WriteString(w, "Hello, YOLO!")
+	if _, err := io.WriteString(w, Hello); err != nil {
 
-	if err != nil {
-		print("hello", err.Error())
+		log.Printf("main.go:hello(): %+v", err)
 	}
 }
 
@@ -19,22 +21,8 @@ func main() {
 
 	http.HandleFunc("/", hello)
 
-	var err = http.ListenAndServe(":"+getPort(), nil)
+	if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
 
-	if err != nil {
-		print("main", err.Error())
+		log.Fatalf("main.go:main(): %+v", err)
 	}
-}
-
-func getPort() string {
-
-	var port = os.Getenv("PORT")
-
-	print("(heroku:" + port + ")")
-
-	if port == "" {
-		port = "8000"
-	}
-
-	return port
 }
