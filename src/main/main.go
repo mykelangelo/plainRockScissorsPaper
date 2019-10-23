@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -45,6 +46,8 @@ func POST(id int) {
 
 	newRequest, err := http.NewRequest("POST", PostUrl, strings.NewReader(data.Encode()))
 	fatality(err, "POST().newReq")
+	newRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	newRequest.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
 	_, err = http.Client{}.Do(newRequest)
 	fatality(err, "POST().doReq")
