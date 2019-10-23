@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -49,8 +50,12 @@ func POST(id int) {
 	newRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	newRequest.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
-	_, err = http.Client{}.Do(newRequest)
+	client := &http.Client{}
+	resp, err := client.Do(newRequest)
 	fatality(err, "POST().doReq")
+
+	_, err = fmt.Println(resp.Status)
+	fatality(err, "POST().printStatus")
 }
 
 func main() {
