@@ -1,1 +1,1 @@
-web: plainRockScissorsPaper
+web: main
