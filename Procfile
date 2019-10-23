@@ -1,1 +1,1 @@
-web: go run ./src/main/main.go
+web: plainRockScissorsPaper
