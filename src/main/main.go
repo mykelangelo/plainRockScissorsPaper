@@ -2,38 +2,46 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	"os"
 )
 
-const Hello = "Hello, YOLO!"
-
 type Chat struct {
 	ID int `json:"id"`
 }
-type MessagePtr struct {
-	Chat Chat `json:"chat"`
+type Message struct {
+	Chat Chat   `json:"chat"`
+	Text string `json:"text"`
 }
-type Body struct {
-	Message MessagePtr `json:"message"`
+type RequestBody struct {
+	Message Message `json:"message"`
 }
+
+type ResponseBody struct {
+	ChatId int    `json:"chat_id"`
+	Text   string `json:"text"`
+}
+
+const UserGreeting = "Good day to you, kind sir! How may I be of service today?"
 
 func hello(w http.ResponseWriter, r *http.Request) {
 
-	var val Body
+	var requestBody RequestBody
 
-	if err := json.NewDecoder(r.Body).Decode(&val); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
 
-		log.Printf("main.go:hello.writeHello(): %+v", err)
+		log.Printf("main.go:hello().read: %+v", err)
 	}
 
-	log.Printf("%d", val.Message.Chat.ID)
+	log.Printf("user wrote: `%s`", requestBody.Message.Text)
 
-	if _, err := io.WriteString(w, Hello); err != nil {
+	if err := json.NewEncoder(w).Encode(&ResponseBody{
+		ChatId: requestBody.Message.Chat.ID,
+		Text:   UserGreeting,
+	}); err != nil {
 
-		log.Printf("main.go:hello.writeHello(): %+v", err)
+		log.Printf("main.go:hello().write: %+v", err)
 	}
 }
 
