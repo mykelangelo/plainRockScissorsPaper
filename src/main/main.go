@@ -41,6 +41,8 @@ func POST(id int) {
 	data.Set("chat_id", string(id))
 	data.Set("text", UserGreeting)
 
+	log.Printf("dataset:<%s, %s>", data.Get("chat_id"), data.Get("text"))
+
 	newRequest, err := http.NewRequest("POST", PostUrl, strings.NewReader(data.Encode()))
 	fatality(err, "POST().newReq")
 
