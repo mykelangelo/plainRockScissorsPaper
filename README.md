@@ -9,6 +9,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-goldenrod.svg?style=shield)](http://makeapullrequest.com) 
 [![Open Source Helpers](https://www.codetriage.com/mykelangelo/plainrockscissorspaper/badges/users.svg)](https://www.codetriage.com/mykelangelo/plainrockscissorspaper)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmykelangelo%2FplainRockScissorsPaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmykelangelo%2FplainRockScissorsPaper?ref=badge_shield)
+[![Dependabot](https://api.dependabot.com/badges/status?host=github&repo=mykelangelo/plainRockScissorsPaper)](https://dependabot.com)
 [![HitCount](http://hits.dwyl.io/mykelangelo/plainRockScissorsPaper.svg)](http://hits.dwyl.io/mykelangelo/plainRockScissorsPaper)
 
 Good old rock-scissors-paper game inline chat bot for Telegram (with "plain" preface due to its simple yet ungeneralized implementation form)
