@@ -39,19 +39,16 @@ const UserGreeting = "Good day to you, kind sir! How may I be of service today?"
 func hello(w http.ResponseWriter, r *http.Request) {
 	var requestBody RequestBody
 
-	fatality(json.NewDecoder(r.Body).Decode(&requestBody), "hello().decode")
+	logality(json.NewDecoder(r.Body).Decode(&requestBody), "hello().decode")
 
 	log.Printf("user wrote: `%s`", requestBody.Message.Text)
 
-	end(w)
+	fatality(json.NewEncoder(w).Encode(&ResponseBody{
+		ChatId: requestBody.Message.Chat.ID,
+		Text:   UserGreeting,
+	}), "hello().encode")
 
 	POST(requestBody.Message.Chat.ID)
-}
-
-func end(w http.ResponseWriter) {
-
-	_, err := io.WriteString(w, "")
-	fatality(err, "end()")
 }
 
 func POST(id int) {
@@ -85,5 +82,13 @@ func fatality(err error, place string) {
 	if err != nil {
 
 		log.Fatalf("main.go:%s: %+v", place, err)
+	}
+}
+
+func logality(err error, place string) {
+
+	if err != nil {
+
+		log.Printf("main.go:%s: %+v", place, err)
 	}
 }
