@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 )
 
 type Chat struct {
@@ -18,21 +19,6 @@ type Message struct {
 type RequestBody struct {
 	Message Message `json:"message"`
 }
-type ResponseBody struct {
-	ChatId   int    `json:"chat_id"`
-	Text     string `json:"text"`
-	contents string
-	offset   int
-}
-
-func (b *ResponseBody) Read(p []byte) (int, error) {
-	if b.offset >= len(b.contents) {
-		return 0, io.EOF
-	}
-	n := copy(p, b.contents[b.offset:])
-	b.offset += n
-	return n, nil
-}
 
 const UserGreeting = "Good day to you, kind sir! How may I be of service today?"
 
@@ -43,23 +29,19 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("user wrote: `%s`", requestBody.Message.Text)
 
-	fatality(json.NewEncoder(w).Encode(&ResponseBody{
-		ChatId: requestBody.Message.Chat.ID,
-		Text:   UserGreeting,
-	}), "hello().encode")
+	fatality(json.NewEncoder(w).Encode(nil), "hello().encode")
 
 	POST(requestBody.Message.Chat.ID)
 }
 
 func POST(id int) {
-	responseBody := ResponseBody{
-		ChatId: id,
-		Text:   UserGreeting,
-	}
-
 	PostUrl := "https://api.telegram.org/bot" + os.Getenv("bot_token") + "/sendMessage"
 
-	newRequest, err := http.NewRequest("POST", PostUrl, &responseBody)
+	data := url.Values{}
+	data.Set("chat_id", string(id))
+	data.Set("text", UserGreeting)
+
+	newRequest, err := http.NewRequest("POST", PostUrl, strings.NewReader(data.Encode()))
 	fatality(err, "POST().newReq")
 
 	_, err = http.DefaultClient.Do(newRequest)
