@@ -57,11 +57,7 @@ func POST(id int) {
 		Text:   UserGreeting,
 	}
 
-	botToken := os.Getenv("bot_token")
-
-	log.Printf("%s", botToken)
-
-	PostUrl := "https://api.telegram.org/bot" + botToken + "/sendMessage"
+	PostUrl := "https://api.telegram.org/bot" + os.Getenv("bot_token") + "/sendMessage"
 
 	newRequest, err := http.NewRequest("POST", PostUrl, &responseBody)
 	fatality(err, "POST().newReq")
