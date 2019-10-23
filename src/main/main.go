@@ -80,6 +80,6 @@ func fatality(err error, place string) {
 
 	if err != nil {
 
-		log.Fatalf("main.go:"+place+": %+v", err)
+		log.Fatalf("main.go:%s: %+v", place, err)
 	}
 }
