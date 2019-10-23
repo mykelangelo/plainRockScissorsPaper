@@ -40,13 +40,14 @@ func POST(id int) {
 	PostUrl := "https://api.telegram.org/bot" + os.Getenv("bot_token") + "/sendMessage"
 
 	data := url.Values{}
-	data.Set("chat_id", string(id))
+	data.Set("chat_id", strconv.Itoa(id))
 	data.Set("text", UserGreeting)
 
 	log.Printf("dataset:<%s, %s>", data.Get("chat_id"), data.Get("text"))
 
 	newRequest, err := http.NewRequest("POST", PostUrl, strings.NewReader(data.Encode()))
 	fatality(err, "POST().newReq")
+
 	newRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	newRequest.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
@@ -54,7 +55,7 @@ func POST(id int) {
 	resp, err := client.Do(newRequest)
 	fatality(err, "POST().doReq")
 
-	_, err = fmt.Println(resp.Status)
+	_, err = fmt.Printf("{status: %s}", resp.Status)
 	fatality(err, "POST().printStatus")
 }
 
