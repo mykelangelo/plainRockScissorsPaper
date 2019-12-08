@@ -68,8 +68,9 @@ func POST(id int, markup Markup) {
 	//data.Set("reply_markup.one_time_keyboard", strconv.FormatBool(replyMarkup.OneTimeKeyboard))
 	marshalled, err2 := json.Marshal(replyMarkup)
 	logality(err2, "marshalling replyMarkup")
-	data.Set("reply_markup", string(marshalled))
+	//data.Set("reply_markup", string(marshalled))
 
+	log.Printf("cejvo klaviaturna rozkladka chy sho: %s", string(marshalled))
 	log.Printf("dataset:<%s, %s>", data.Get("chat_id"), data.Get("text"))
 
 	newRequest, err := http.NewRequest("POST", PostUrl, strings.NewReader(data.Encode()))
