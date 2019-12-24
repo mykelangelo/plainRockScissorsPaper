@@ -51,11 +51,15 @@ func POST(id int64, text string) {
 
 	data := url.Values{}
 	data.Set("chat_id", strconv.Itoa(int(id)))
-	var UserGreeting = "Good day to you, kind sir! How may I be of service today?"
+	const UserGreeting = "Good day to you, kind sir! How may I be of service today?"
+	answer := UserGreeting
 
-	UserGreeting = makeMove(text, UserGreeting)
+	if contains(MOVES, text) {
+		move, ans := makeMove(text)
+		answer = move + "\n" + ans
+	}
 
-	data.Set("text", UserGreeting)
+	data.Set("text", answer)
 	marshalled, err2 := json.Marshal(replyMarkup)
 	logality(err2, "marshalling replyMarkup")
 	data.Set("reply_markup", string(marshalled))
@@ -77,35 +81,35 @@ func POST(id int64, text string) {
 	fatality(err, "POST().printStatus")
 }
 
-func makeMove(text string, UserGreeting string) string {
-	if contains(MOVES, text) {
-		move := generateMove()
-		UserGreeting = move + "\n"
-		const UserWins = "Yo, you do win! 🏆"
-		const BotWins = "I win! 😎"
-		if move == text {
-			UserGreeting += "It's a draw, mate! 🤷🙃‍"
-		} else if move == STONE {
-			if text == PAPER {
-				UserGreeting += UserWins
-			} else {
-				UserGreeting += BotWins
-			}
-		} else if move == PAPER {
-			if text == STONE {
-				UserGreeting += BotWins
-			} else {
-				UserGreeting += UserWins
-			}
-		} else if move == SCISSORS {
-			if text == PAPER {
-				UserGreeting += BotWins
-			} else {
-				UserGreeting += UserWins
-			}
-		}
+func makeMove(text string) (string, string) {
+	move := generateMove()
+
+	const UserWins = "Yo, you do win! 🏆"
+	const BotWins = "I win! 😎"
+
+	if move == text {
+		return move, "It's a draw, mate! 🤷🙃‍"
 	}
-	return UserGreeting
+
+	if move == STONE {
+		if text == PAPER {
+			return move, UserWins
+		}
+		return move, BotWins
+	}
+
+	if move == PAPER {
+		if text == STONE {
+			return move, BotWins
+		}
+		return move, UserWins
+	}
+
+	// move = SCISSORS
+	if text == PAPER {
+		return move, BotWins
+	}
+	return move, UserWins
 }
 
 func generateMove() string {
