@@ -11,25 +11,8 @@ import (
 	"strings"
 )
 
-type Chat struct {
-	ID int `json:"id"`
-}
-type Message struct {
-	Chat                Chat   `json:"chat"`
-	Text                string `json:"text"`
-	ReplyKeyboardMarkup Markup `json:"reply_markup"`
-}
 type RequestBody struct {
 	Message Message `json:"message"`
-}
-type Keyboard struct {
-	Text           [][]string `json:"text"`
-	RequestContact bool       `json:"request_contact"`
-}
-type Markup struct {
-	Keyboard        Keyboard `json:"keyboard"`
-	ResizeKeyboard  bool     `json:"resize_keyboard"`
-	OneTimeKeyboard bool     `json:"one_time_keyboard"`
 }
 
 const UserGreeting = "Good day to you, kind sir! How may I be of service today?"
@@ -39,38 +22,46 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 	logality(json.NewDecoder(r.Body).Decode(&requestBody), "hello().decode")
 
-	log.Printf("user wrote: `%s`", requestBody.Message.Text)
+	marshalled, _ := json.Marshal(requestBody.Message)
+	log.Printf("user's message info: `%s`", marshalled)
 
-	fatality(json.NewEncoder(w).Encode(nil), "hello().encode")
+	//fatality(json.NewEncoder(w).Encode(nil), "hello().encode")
 
-	POST(requestBody.Message.Chat.ID, requestBody.Message.ReplyKeyboardMarkup)
+	POST(requestBody.Message.Chat.ID)
 }
 
-func POST(id int, markup Markup) {
+func POST(id int64) {
 	PostUrl := "https://api.telegram.org/bot" + os.Getenv("bot_token") + "/sendMessage"
 
-	keyboard := Keyboard{Text: [][]string{
-		{"7", "8", "9"},
-		{"4", "5", "6"},
-		{"1", "2", "3"},
-		{"0"},
-	}}
-
-	replyMarkup := markup
-	replyMarkup.Keyboard = keyboard
-	replyMarkup.ResizeKeyboard = true
-	replyMarkup.OneTimeKeyboard = true
+	replyMarkup := ReplyKeyboardMarkup{Keyboard: [][]KeyboardButton{
+		{
+			{"7", false, false},
+			{"8", false, false},
+			{"9", false, false},
+		}, {
+			{"4", false, false},
+			{"5", false, false},
+			{"6", false, false},
+		}, {
+			{"1", false, false},
+			{"2", false, false},
+			{"3", false, false},
+		}, {
+			{"0", false, false},
+		},
+	},
+		ResizeKeyboard:  true,
+		OneTimeKeyboard: false,
+	}
 
 	data := url.Values{}
-	data.Set("chat_id", strconv.Itoa(id))
+	data.Set("chat_id", strconv.Itoa(int(id)))
 	data.Set("text", UserGreeting)
-	//data.Set("reply_markup.resize_keyboard", strconv.FormatBool(replyMarkup.ResizeKeyboard))
-	//data.Set("reply_markup.one_time_keyboard", strconv.FormatBool(replyMarkup.OneTimeKeyboard))
 	marshalled, err2 := json.Marshal(replyMarkup)
 	logality(err2, "marshalling replyMarkup")
-	//data.Set("reply_markup", string(marshalled))
+	data.Set("reply_markup", string(marshalled))
 
-	log.Printf("cejvo klaviaturna rozkladka chy sho: %s", string(marshalled))
+	log.Printf("keyboard markup, it must be: %s", string(marshalled))
 	log.Printf("dataset:<%s, %s>", data.Get("chat_id"), data.Get("text"))
 
 	newRequest, err := http.NewRequest("POST", PostUrl, strings.NewReader(data.Encode()))
