@@ -4,50 +4,45 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type RequestBody struct {
 	Message Message `json:"message"`
 }
 
-const UserGreeting = "Good day to you, kind sir! How may I be of service today?"
-
 func hello(w http.ResponseWriter, r *http.Request) {
 	var requestBody RequestBody
 
 	logality(json.NewDecoder(r.Body).Decode(&requestBody), "hello().decode")
 
-	marshalled, _ := json.Marshal(requestBody.Message)
+	marshalled, err := json.Marshal(requestBody.Message)
+	logality(err, "marshalling requestBody.Message")
 	log.Printf("user's message info: `%s`", marshalled)
 
-	//fatality(json.NewEncoder(w).Encode(nil), "hello().encode")
-
-	POST(requestBody.Message.Chat.ID)
+	POST(requestBody.Message.Chat.ID, requestBody.Message.Text)
 }
 
-func POST(id int64) {
+const STONE = "🗿"
+const SCISSORS = "✂"
+const PAPER = "🗒"
+
+var MOVES = []string{STONE, SCISSORS, PAPER}
+
+func POST(id int64, text string) {
 	PostUrl := "https://api.telegram.org/bot" + os.Getenv("bot_token") + "/sendMessage"
 
 	replyMarkup := ReplyKeyboardMarkup{Keyboard: [][]KeyboardButton{
 		{
-			{"7", false, false},
-			{"8", false, false},
-			{"9", false, false},
-		}, {
-			{"4", false, false},
-			{"5", false, false},
-			{"6", false, false},
-		}, {
-			{"1", false, false},
-			{"2", false, false},
-			{"3", false, false},
-		}, {
-			{"0", false, false},
+			{MOVES[0], false, false},
+			{MOVES[1], false, false},
+			{MOVES[2], false, false},
 		},
 	},
 		ResizeKeyboard:  true,
@@ -56,6 +51,10 @@ func POST(id int64) {
 
 	data := url.Values{}
 	data.Set("chat_id", strconv.Itoa(int(id)))
+	var UserGreeting = "Good day to you, kind sir! How may I be of service today?"
+
+	UserGreeting = makeMove(text, UserGreeting)
+
 	data.Set("text", UserGreeting)
 	marshalled, err2 := json.Marshal(replyMarkup)
 	logality(err2, "marshalling replyMarkup")
@@ -76,6 +75,55 @@ func POST(id int64) {
 
 	_, err = fmt.Printf("{status: %s}", resp.Status)
 	fatality(err, "POST().printStatus")
+}
+
+func makeMove(text string, UserGreeting string) string {
+	if contains(MOVES, text) {
+		move := generateMove()
+		UserGreeting = move + "\n"
+		const UserWins = "Yo, you do win! 🏆"
+		const BotWins = "I win! 😎"
+		if move == text {
+			UserGreeting += "It's a draw, mate! 🤷🙃‍"
+		}
+		if move == STONE {
+			if text == PAPER {
+				UserGreeting += UserWins
+			} else {
+				UserGreeting += BotWins
+			}
+		}
+		if move == PAPER {
+			if text == STONE {
+				UserGreeting += BotWins
+			} else {
+				UserGreeting += UserWins
+			}
+		}
+		if move == SCISSORS {
+			if text == PAPER {
+				UserGreeting += BotWins
+			} else {
+				UserGreeting += UserWins
+			}
+		}
+	}
+	return UserGreeting
+}
+
+func generateMove() string {
+	rand.Seed(time.Now().UnixNano())
+
+	return MOVES[rand.Intn(len(MOVES))]
+}
+
+func contains(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
+	}
+	return false
 }
 
 func main() {
