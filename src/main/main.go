@@ -85,22 +85,19 @@ func makeMove(text string, UserGreeting string) string {
 		const BotWins = "I win! 😎"
 		if move == text {
 			UserGreeting += "It's a draw, mate! 🤷🙃‍"
-		}
-		if move == STONE {
+		} else if move == STONE {
 			if text == PAPER {
 				UserGreeting += UserWins
 			} else {
 				UserGreeting += BotWins
 			}
-		}
-		if move == PAPER {
+		} else if move == PAPER {
 			if text == STONE {
 				UserGreeting += BotWins
 			} else {
 				UserGreeting += UserWins
 			}
-		}
-		if move == SCISSORS {
+		} else if move == SCISSORS {
 			if text == PAPER {
 				UserGreeting += BotWins
 			} else {
